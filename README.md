@@ -1,13 +1,13 @@
 
 # 📱 Project Name
 
-## 🚀 Giới thiệu
+## 🚀 Introduction
 
 App name introduction
 
 ---
 
-## 🧠 Tính năng chính
+## 🧠 Features
 
 - 🔐 Feature 1
 - 🧑‍💼 Feature 2
