@@ -18,7 +18,7 @@ export const TextInput = ({
   ...rest
 }: InputProps) => {
   const styles = styleSheet();
-  const [isShowPassword, setShowPassword] = useState(false);
+  const [isShowPassword, setShowPassword] = useState(secureTextEntry);
 
   const tooglePassword = () => setShowPassword((prev) => !prev);
 
@@ -60,7 +60,7 @@ export const TextInput = ({
         style={containerStyle}>
         {!!leading && leading}
         <RNTextInput
-          secureTextEntry={secureTextEntry}
+          secureTextEntry={isShowPassword}
           allowFontScaling={false}
           underlineColorAndroid="transparent"
           autoCorrect={false}
@@ -81,7 +81,6 @@ const styleSheet = makeStyles((theme) => {
       fontSize: 14,
       fontFamily: FontDefault.primary,
       height: '100%',
-      textAlignVertical: 'top',
     },
   };
 });

@@ -20,6 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     'expo-font',
+    "expo-localization",
     [
       'react-native-keys',
       {

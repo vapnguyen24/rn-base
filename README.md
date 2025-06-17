@@ -18,63 +18,63 @@ App name introduction
 
 ---
 
-## 🧱 Kiến trúc dự án
+## 🧱 Project Structure
 
-Áp dụng theo mô hình _MVVM / Feature-based structure_. Cấu trúc thư mục chính:
+Following the _MVVM / Feature-based structure_ model. Main directory structure:
 
 ```
-assets/                  # Tài nguyên tĩnh như hình ảnh, icon, font
-env/                     # Các file cấu hình môi trường (.env.development, .env.production, ...)
-src/                     # Thư mục chứa toàn bộ mã nguồn chính của ứng dụng
-├── app                  # Routing & layout theo cấu trúc file (Expo Router / kiểu Next.js)
-│   ├── (auth)           # Các route/layout cho người dùng đã đăng nhập
-│   ├── (un-auth)        # Các route/layout cho người dùng chưa đăng nhập
-│   ├── +html.tsx        # Entry HTML root (cho web hoặc SSR)
-│   ├── +not-found.tsx   # Màn hình 404 khi route không tồn tại
-│   └── _layout.tsx      # Layout tổng thể cho toàn bộ ứng dụng
-├── common               # Các hàm/tệp tiện ích dùng chung trên toàn app
-│   ├── animated         # Các tiện ích hoặc component liên quan đến animation
-│   ├── constant         # Các hằng số toàn cục (route, config, status code)
-│   ├── hooks            # Custom React Hooks
-│   ├── method           # Các hàm xử lý logic thuần
-│   ├── regex            # Các biểu thức chính quy được định nghĩa sẵn
-│   ├── signal           # Trạng thái dạng signal (nếu dùng Preact/React signals)
-│   ├── string           # Các hàm xử lý chuỗi
-│   └── yup-validate     # Các schema validation dùng Yup
-├── components           # Component UI riêng cho từng màn hình (không dùng lại toàn app)
+assets/                  # Static assets such as images, icons, fonts
+env/                     # Environment config files (.env.development, .env.production, etc.)
+src/                     # Main source code of the application\
+├── app                  # App routing and layout (e.g. Expo Router / Next.js-style routing)
+│   ├── (auth)           # Authenticated user routes/layouts
+│   ├── (un-auth)        # Unauthenticated user routes/layouts
+│   ├── +html.tsx        # Root HTML entry point (used in SSR or web exports)
+│   ├── +not-found.tsx   # 404 Not Found page
+│   └── _layout.tsx      # Global layout wrapper for all screens/routes
+├── common               # Reusable logic helpers and utility modules
+│   ├── animated         # Animation-related utilities and components
+│   ├── constant         # App-wide constants (routes, configs, etc.)
+│   ├── hooks            # Custom React hooks
+│   ├── method           # Generic logic functions
+│   ├── regex            # Predefined regular expressions
+│   ├── signal           # Signal-based state (if using React/Preact signals)
+│   ├── string           # String manipulation helpers
+│   └── yup-validate     # Yup validation schemas
+├── components           # Screen-specific UI components (used only within certain screens)
 ├── data                 
-│   └── remote           # Các nguồn dữ liệu từ server (API fetcher, services)
-├── library              # Các thư viện nội bộ được dùng xuyên suốt ứng dụng
-│   ├── components       # Core UI component tuỳ chỉnh (Text, View, Button,...)
-│   ├── index.ts         # Entry point của thư viện
-│   ├── networking       # Cấu hình HTTP client (Axios, interceptor, base URL,...)
-│   └── utils            # Các hàm tiện ích riêng cho thư viện
-├── models               # Định nghĩa kiểu dữ liệu và interface
-│   ├── input            # Model cho dữ liệu gửi lên (request body)
-│   └── output           # Model cho dữ liệu nhận về (response)
-├── theme                # Hệ thống thiết kế: màu sắc, font, style
-│   ├── colors           # Định nghĩa bảng màu chính
-│   ├── index.ts         # Điểm khởi đầu của theme
-│   ├── text-presets     # Các preset cho typography (heading, body, caption...)
-│   ├── theme.ts         # File cấu hình theme chính
-│   └── typography       # Định nghĩa font, kích thước, độ đậm
-└── zustand              # Quản lý trạng thái global với Zustand
-    ├── selectors        # Hàm selector để lấy dữ liệu từ store
-    └── stores           # Các slice/store Zustand (authStore, deviceStore,...)
+│   └── remote           # Remote data sources (API fetchers, services)
+├── library              # Internal base libraries shared across the app
+│   ├── components       # Core UI components (e.g., CustomText, CustomButton)
+│   ├── index.ts         # Library entry point
+│   ├── networking       # HTTP client setup (Axios, interceptors, etc.)
+│   └── utils            # Utility functions specific to the library
+├── models               # Type definitions and interfaces for data models
+│   ├── input            # Input payload models (API requests)
+│   └── output           # Output data models (API responses)
+├── theme                # Design system: colors, typography, theming
+│   ├── colors           # Color palette definitions
+│   ├── index.ts         # Theme entry point
+│   ├── text-presets     # Preset definitions for text styles
+│   ├── theme.ts         # Main theme configuration
+│   └── typography       # Font families, sizes, and text weights
+└── zustand              # Global state management with Zustand
+    ├── selectors        # Zustand selectors for extracting state
+    └── stores           # Zustand store definitions (auth, device, etc.)
 ```
 
 ---
 
-## ⚙️ Cài đặt & Khởi chạy
+## ⚙️ Installation & Running
 
-### Yêu cầu hệ thống
+### System Requirements
 
 - Node.js >= 18
-- Yarn hoặc npm
+- Yarn or npm
 - Android Studio / Xcode
 - Watchman (macOS)
 
-### Cài đặt
+### Installation
 
 ```bash
 git clone https://github.com/yourusername/your-project.git
@@ -85,7 +85,7 @@ yarn install
 ### Expo prebuild
 
 ```bash
-npx expo prebuild      # (Chỉ dùng lệnh này khi mới clone dự án về hoặc khi thêm một thư viện native mới)
+npx expo prebuild      # (only use this script when clone this source in first time or install new native library)
 ```
 
 ### Expo start
@@ -94,7 +94,7 @@ npx expo prebuild      # (Chỉ dùng lệnh này khi mới clone dự án về 
 yarn start
 ```
 
-### Chạy trên Android
+### Run on Android
 
 ```bash
 yarn dev:android        # development env
@@ -102,7 +102,7 @@ yarn staging:android    # staging env
 yarn pro:android        # production env
 ```
 
-### Chạy trên iOS
+### Run on IOS
 
 ```bash
 yarn dev:ios        # development env
@@ -112,15 +112,17 @@ yarn pro:ios        # production env
 
 ---
 
-## 🔐 Cấu hình môi trường
+## 🔐 Environment Configuration
 
-Các file môi trường đều nằm trong folder `env` tại root project (liên hệ với chủ sở hữu để lấy folder nếu projcet chưa có)
+All environment files are located in the `env` folder at the project root (contact the owner to obtain this folder if your project does not have it).
 
-Sử dụng thư viện [`react-native-keys`](https://github.com/numandev1/react-native-keys) hoặc tương đương để load biến môi trường.
+Remember add folder env to gitiginore
+
+Use a library like [`react-native-keys`](https://github.com/numandev1/react-native-keys) or similar to load environment variables.
 
 ---
 
-## 📸 Hình ảnh demo
+## 📸 Screenshot demo
 
 Screenshot content
 
@@ -140,12 +142,12 @@ Screenshot content
 ---
 
 
-## 📄 Giấy phép
+## 📄 License
 
 License content
 
 ---
 
-## 📬 Liên hệ
+## 📬 Contact
 
 Contact content
