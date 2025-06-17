@@ -1,0 +1,25 @@
+{
+  "build": {
+    "development": {
+      "env": {
+        "APP_VARIANT": "development",
+        "KEYSFILE": "./env/dev.json"
+      }
+    },
+    "staging": {
+      "env": {
+        "APP_VARIANT": "staging",
+        "KEYSFILE": "./env/staging.json"
+      }
+    },
+    "production": {
+      "env": {
+        "APP_VARIANT": "production",
+        "KEYSFILE": "./env/production.json"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "error": {
+    "-100": "Lỗi kết nối! Vui lòng kiểm tra lại kết nối.",
+    "0": "Hết thời gian yêu cầu",
+    "400": "Yêu cầu không hợp lệ",
+    "401": "Chưa xác thực",
+    "402": "Yêu cầu thanh toán",
+    "403": "Bị cấm",
+    "404": "Không tìm thấy",
+    "405": "Phương thức không được phép",
+    "406": "Không thể chấp nhận",
+    "407": "Yêu cầu xác thực proxy",
+    "408": "Hết thời gian yêu cầu",
+    "409": "Xung đột",
+    "410": "Không còn tồn tại",
+    "411": "Yêu cầu độ dài",
+    "412": "Điều kiện tiên quyết thất bại",
+    "413": "Tải trọng quá lớn",
+    "414": "URI quá dài",
+    "415": "Không hỗ trợ kiểu dữ liệu",
+    "416": "Không thỏa mãn phạm vi",
+    "417": "Kỳ vọng thất bại",
+    "500": "Lỗi máy chủ nội bộ",
+    "501": "Chưa được thực hiện",
+    "502": "Cổng kết nối không hợp lệ",
+    "503": "Dịch vụ không khả dụng",
+    "504": "Hết thời gian từ cổng kết nối",
+    "505": "Phiên bản HTTP không được hỗ trợ",
+    "have_error": "Đã xảy ra lỗi. Vui lòng thử lại sau.",
+    "error_on_request": "Đã xảy ra lỗi khi gửi yêu cầu",
+    "error_on_handle": "Đã xảy ra lỗi khi xử lý dữ liệu",
+    "server_error": "Lỗi máy chủ"
+  },
+
+  "date": {
+    "just_now": "Vừa xong",
+    "minute_ago_one": "{{count}} phút trước",
+    "minute_ago_other": "{{count}} phút trước",
+    "hour_ago_one": "{{count}} giờ trước",
+    "hour_ago_other": "{{count}} giờ trước",
+    "yesterday": "Hôm qua",
+    "days_ago": "{{count}} ngày trước",
+    "last_week": "Tuần trước",
+    "last_month": "Tháng trước",
+    "months_ago": "{{count}} tháng trước",
+    "last_year": "Năm ngoái",
+    "years_ago": "{{count}} năm trước"
+  },
+  "dialog": {
+    "error": "Lỗi",
+    "cancel": "Hủy",
+    "warning": "Cảnh báo",
+    "loading": "Đang tải",
+    "select": "Chọn",
+    "confirm": "Xác nhận"
+  },
+  "validation": {
+    "email_required": "Email không được để trống"
+  },
+  "tabs": {
+    "tab1": "Thẻ 1",
+    "tab2": "Thẻ 2",
+    "tab3": "Thẻ 3",
+    "tab4": "Thẻ 4"
+  }
+}
