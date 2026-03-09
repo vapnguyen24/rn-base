@@ -1,6 +1,7 @@
 const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const { withUniwindConfig } = require('uniwind/metro');
+const { withStorybook } = require('@storybook/react-native/metro/withStorybook');
 
 /**
  * Metro configuration
@@ -21,7 +22,12 @@ const config = mergeConfig(getDefaultConfig(__dirname), {
   },
 });
 
+const storybookConfig = withStorybook(config, {
+  enabled: process.env.STORYBOOK_ENABLED === 'true',
+  configPath: path.resolve(__dirname, './.rnstorybook'),
+});
+
 // withUniwindConfig MUST be the outermost wrapper
-module.exports = withUniwindConfig(config, {
+module.exports = withUniwindConfig(storybookConfig, {
   cssEntryFile: './global.css',
 });
