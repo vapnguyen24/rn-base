@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import "uniwind";
+@import "heroui-native/styles";
+
+@source "./node_modules/heroui-native/lib";
+
+/* ─── Theme Overrides ─────────────────────────────────────────────────────── */
+@layer theme {
+  :root {
+    @variant light {
+      /* Brand accent — violet */
+      --accent: oklch(0.55 0.24 290);
+      --accent-foreground: oklch(0.99 0 0);
+
+      /* Background & surface */
+      --background: oklch(0.98 0.003 290);
+      --foreground: oklch(0.15 0.02 290);
+
+      --surface: oklch(1 0 0);
+      --surface-foreground: oklch(0.15 0.02 290);
+
+      --surface-secondary: oklch(0.95 0.005 290);
+      --surface-secondary-foreground: oklch(0.15 0.02 290);
+
+      --surface-tertiary: oklch(0.93 0.006 290);
+      --surface-tertiary-foreground: oklch(0.15 0.02 290);
+
+      /* Overlay */
+      --overlay: oklch(1 0 0);
+      --overlay-foreground: oklch(0.15 0.02 290);
+
+      /* Status */
+      --success: oklch(0.72 0.17 155);
+      --success-foreground: oklch(0.15 0.05 155);
+
+      --warning: oklch(0.78 0.15 80);
+      --warning-foreground: oklch(0.2 0.06 80);
+
+      --danger: oklch(0.65 0.22 25);
+      --danger-foreground: oklch(0.99 0 0);
+
+      /* Misc */
+      --muted: oklch(0.55 0.02 290);
+      --border: oklch(0.88 0.006 290);
+      --separator: oklch(0.8 0.008 290);
+      --focus: var(--accent);
+      --link: var(--accent);
+    }
+
+    @variant dark {
+      /* Brand accent — violet (slightly lighter for dark bg) */
+      --accent: oklch(0.68 0.22 290);
+      --accent-foreground: oklch(0.99 0 0);
+
+      /* Background & surface */
+      --background: oklch(0.12 0.01 290);
+      --foreground: oklch(0.95 0.005 290);
+
+      --surface: oklch(0.18 0.012 290);
+      --surface-foreground: oklch(0.95 0.005 290);
+
+      --surface-secondary: oklch(0.22 0.012 290);
+      --surface-secondary-foreground: oklch(0.95 0.005 290);
+
+      --surface-tertiary: oklch(0.26 0.012 290);
+      --surface-tertiary-foreground: oklch(0.95 0.005 290);
+
+      /* Overlay */
+      --overlay: oklch(0.2 0.012 290);
+      --overlay-foreground: oklch(0.95 0.005 290);
+
+      /* Status */
+      --success: oklch(0.68 0.17 155);
+      --success-foreground: oklch(0.95 0.008 155);
+
+      --warning: oklch(0.75 0.15 85);
+      --warning-foreground: oklch(0.2 0.05 85);
+
+      --danger: oklch(0.62 0.22 25);
+      --danger-foreground: oklch(0.99 0 0);
+
+      /* Misc */
+      --muted: oklch(0.55 0.015 290);
+      --border: oklch(0.28 0.012 290);
+      --separator: oklch(0.35 0.012 290);
+      --focus: var(--accent);
+      --link: var(--accent);
+    }
+  }
+}
