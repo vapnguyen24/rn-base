@@ -24,10 +24,11 @@ export function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.container}>
+    <View testID="login-screen" style={styles.container}>
       <Text style={styles.title}>{t('auth.welcomeBack')}</Text>
 
       <Input
+        testID="login-email-input"
         label={t('auth.email')}
         value={email}
         onChangeText={setEmail}
@@ -37,6 +38,7 @@ export function LoginScreen({ navigation }: Props) {
         placeholder={t('auth.emailPlaceholder')}
       />
       <Input
+        testID="login-password-input"
         label={t('auth.password')}
         value={password}
         onChangeText={setPassword}
@@ -45,11 +47,11 @@ export function LoginScreen({ navigation }: Props) {
         error={error?.message}
       />
 
-      <Button onPress={handleLogin} isDisabled={isPending}>
+      <Button testID="login-submit-button" onPress={handleLogin} isDisabled={isPending}>
         {isPending ? t('auth.signingIn') : t('auth.signIn')}
       </Button>
 
-      <Button variant="ghost" onPress={() => navigation.navigate('Register')}>
+      <Button testID="login-create-account-button" variant="ghost" onPress={() => navigation.navigate('Register')}>
         {t('auth.createAccount')}
       </Button>
     </View>

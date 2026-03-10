@@ -1,4 +1,4 @@
-import type { Translations } from './en';
+import { Translations } from "@shared/types/common.types";
 
 const vi: Translations = {
   common: {

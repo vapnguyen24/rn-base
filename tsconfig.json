@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["jest"],
     "typeRoots": ["./src/@types", "./node_modules/@types"],
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {
       "@core/*": ["src/core/*"],
@@ -13,5 +13,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["**/node_modules", "**/Pods"]
+  "exclude": ["**/node_modules", "**/Pods", "e2e"]
 }

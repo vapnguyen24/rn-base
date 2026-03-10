@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { RootStackParamList } from './navigation.types';
 import { AuthNavigator } from './auth.navigator';
+import { HomeScreen } from '@features/home/presentation/screens/home.screen';
 import { useAuthStore } from '@features/auth/presentation/store/auth.store';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -14,8 +15,7 @@ export function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isAuthenticated ? (
-          // Authenticated stack — add HomeNavigator here
-          <Stack.Screen name="Home" component={() => null} />
+          <Stack.Screen name="Home" component={HomeScreen} />
         ) : (
           <Stack.Screen name="Auth" component={AuthNavigator} />
         )}

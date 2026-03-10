@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Include both the @types directory and node_modules itself so TypeScript
+    // can find `detox` (which ships its own types, not via @types/detox).
+    "typeRoots": ["../node_modules/@types", "../node_modules"],
+    "types": ["jest", "detox"],
+    "baseUrl": "..",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@features/*": ["src/features/*"],
+      "@shared/*": ["src/shared/*"],
+      "@navigation/*": ["src/navigation/*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["../node_modules", "../ios/Pods"]
+}

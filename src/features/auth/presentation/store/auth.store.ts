@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { mmkvStorage } from '@core/storage/mmkv.storage';
 import type { User } from '../../domain/entities/User';
-import type { AuthTokens } from '../../domain/repositories/IAuthRepository';
+import type { AuthTokens } from '../../domain/repositories/auth.repository.interface';
 
 interface AuthState {
   user: User | null;

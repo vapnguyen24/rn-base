@@ -1,3 +1,5 @@
+import en from "@core/i18n/locales/en";
+
 /** Represents a value that can be `T` or `null`. */
 export type Nullable<T> = T | null;
 
@@ -86,3 +88,16 @@ export type Fn<T = void> = () => T;
  * @template T - The resolved type. Defaults to `void`.
  */
 export type AsyncFn<T = void> = () => Promise<T>;
+
+
+/**
+ * Recursively converts all properties of `T` to `string`. Useful for typing translation objects where all values are strings.
+ * @template T - The source type.
+ */
+export type DeepString<T> = { [K in keyof T]: T[K] extends object ? DeepString<T[K]> : string };
+
+/**
+ * The shape of the translation object used in i18n. It is derived from the English locale, but all values are typed as `string` to reflect that translations will also be strings.
+ * This allows us to use translation keys (e.g., 'auth.welcomeBack') in our code with proper type safety, while ensuring that the actual values can be any string.
+ */
+export type Translations = DeepString<typeof en>;

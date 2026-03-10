@@ -1,7 +1,12 @@
 const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const { withUniwindConfig } = require('uniwind/metro');
-const { withStorybook } = require('@storybook/react-native/metro/withStorybook');
+
+// Lazy-require withStorybook ONLY when Storybook is enabled.
+// @storybook/react-native/metro/withStorybook synchronously require()s the
+// ESM-only `storybook` package at module load time, which crashes Metro
+// in normal (non-Storybook) builds — including E2E and production builds.
+const isStorybookEnabled = process.env.STORYBOOK_ENABLED === 'true';
 
 /**
  * Metro configuration
@@ -22,10 +27,14 @@ const config = mergeConfig(getDefaultConfig(__dirname), {
   },
 });
 
-const storybookConfig = withStorybook(config, {
-  enabled: process.env.STORYBOOK_ENABLED === 'true',
-  configPath: path.resolve(__dirname, './.rnstorybook'),
-});
+let storybookConfig = config;
+if (isStorybookEnabled) {
+  const { withStorybook } = require('@storybook/react-native/metro/withStorybook');
+  storybookConfig = withStorybook(config, {
+    enabled: true,
+    configPath: path.resolve(__dirname, './.rnstorybook'),
+  });
+}
 
 // withUniwindConfig MUST be the outermost wrapper
 module.exports = withUniwindConfig(storybookConfig, {
