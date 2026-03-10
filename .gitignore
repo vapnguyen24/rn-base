@@ -77,4 +77,6 @@ yarn-error.log
 .env
 .env.*
 
+# react-native-config codegen
+ios/tmp.xcconfig
 .artifacts/

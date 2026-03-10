@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../hooks/useLoginMutation';
 import { Input } from '@shared/components/input';
 import { Button } from 'heroui-native/button';
+import Config from 'react-native-config';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
@@ -54,6 +55,8 @@ export function LoginScreen({ navigation }: Props) {
       <Button testID="login-create-account-button" variant="ghost" onPress={() => navigation.navigate('Register')}>
         {t('auth.createAccount')}
       </Button>
+
+      <Text>{Config.API_URL}</Text>
     </View>
   );
 }

@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android:staging": "ENVFILE=.env.staging react-native run-android",
+    "android:prod": "ENVFILE=.env.production react-native run-android",
     "ios": "react-native run-ios",
+    "ios:staging": "echo .env.staging > /tmp/envfile && react-native run-ios",
+    "ios:prod": "echo .env.production > /tmp/envfile && react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
@@ -12,10 +16,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:e2e:ios:build": "detox build --configuration ios.sim.release",
-    "test:e2e:ios": "detox test --configuration ios.sim.release --cleanup",
-    "storybook": "STORYBOOK_ENABLED=true react-native start --reset-cache",
-    "storybook:ios": "react-native run-ios --no-packager",
-    "storybook:android": "react-native run-android --no-packager"
+    "test:e2e:ios": "detox test --configuration ios.sim.release --cleanup"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",

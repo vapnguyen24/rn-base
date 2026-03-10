@@ -5,7 +5,7 @@
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 
-const isStorybook = process.env.STORYBOOK_ENABLED === 'true';
+const isStorybook = false;
 
 const RootComponent = isStorybook
   ? require('./.rnstorybook').default
