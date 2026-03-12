@@ -1,57 +1,67 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@navigation/navigation.types';
 import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../hooks/useLoginMutation';
-import { Input } from '@shared/components/input';
 import { Button } from 'heroui-native/button';
+import { FormField } from '@shared/components/form/FormField';
+import { useZodForm } from '@shared/hooks/useZodForm';
+import { loginSchema } from '../schemas/login.schema';
+import type { LoginSchema } from '../schemas/login.schema';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export function LoginScreen({ navigation }: Props) {
   const { t } = useTranslation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { mutate: login, isPending } = useLoginMutation();
 
-  const { mutate: login, isPending, error } = useLoginMutation();
+  const { control, handleSubmit } = useZodForm<LoginSchema>(loginSchema);
 
-  const handleLogin = () => {
-    login(
-      { email, password },
-      { onError: err => Alert.alert(t('auth.loginFailed'), err.message) },
-    );
+  const onSubmit = (data: LoginSchema) => {
+    login(data, {
+      onError: err => Alert.alert(t('auth.loginFailed'), err.message),
+    });
   };
 
   return (
-    <View testID="login-screen" className='bg-background gap-4' style={styles.container}>
+    <View testID="login-screen" className="bg-background gap-4" style={styles.container}>
       <Text style={styles.title}>{t('auth.welcomeBack')}</Text>
 
-      <Input
+      <FormField
         testID="login-email-input"
+        control={control}
+        name="email"
         label={t('auth.email')}
-        value={email}
-        onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
         placeholder={t('auth.emailPlaceholder')}
       />
-      <Input
+
+      <FormField
         testID="login-password-input"
+        control={control}
+        name="password"
         label={t('auth.password')}
-        value={password}
-        onChangeText={setPassword}
         secureTextEntry
         placeholder={t('auth.passwordPlaceholder')}
-        error={error?.message}
       />
 
-      <Button testID="login-submit-button" onPress={handleLogin} isDisabled={isPending} className='mt-2'>
+      <Button
+        testID="login-submit-button"
+        onPress={handleSubmit(onSubmit)}
+        isDisabled={isPending}
+        className="mt-2"
+      >
         {isPending ? t('auth.signingIn') : t('auth.signIn')}
       </Button>
 
-      <Button testID="login-create-account-button" variant="ghost" onPress={() => navigation.navigate('Register')}>
+      <Button
+        testID="login-create-account-button"
+        variant="ghost"
+        onPress={() => navigation.navigate('Register')}
+      >
         {t('auth.createAccount')}
       </Button>
     </View>
