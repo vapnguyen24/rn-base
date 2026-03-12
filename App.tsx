@@ -9,6 +9,7 @@ import { Uniwind, useUniwind } from 'uniwind';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './src/core/query/query.client';
 import { RootNavigator } from './src/navigation/root.navigator';
+import { NetworkStatusMonitor } from './src/shared/components/network-status-monitor';
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useColorScheme();
@@ -35,6 +36,7 @@ function AppContent() {
   return (
     <>
       <StatusBar barStyle={barStyle} />
+      <NetworkStatusMonitor />
       <RootNavigator />
     </>
   );

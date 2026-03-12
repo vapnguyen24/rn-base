@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../hooks/useLoginMutation';
 import { Input } from '@shared/components/input';
 import { Button } from 'heroui-native/button';
-import Config from 'react-native-config';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
@@ -25,7 +24,7 @@ export function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <View testID="login-screen" style={styles.container}>
+    <View testID="login-screen" className='bg-background gap-4' style={styles.container}>
       <Text style={styles.title}>{t('auth.welcomeBack')}</Text>
 
       <Input
@@ -48,15 +47,13 @@ export function LoginScreen({ navigation }: Props) {
         error={error?.message}
       />
 
-      <Button testID="login-submit-button" onPress={handleLogin} isDisabled={isPending}>
+      <Button testID="login-submit-button" onPress={handleLogin} isDisabled={isPending} className='mt-2'>
         {isPending ? t('auth.signingIn') : t('auth.signIn')}
       </Button>
 
       <Button testID="login-create-account-button" variant="ghost" onPress={() => navigation.navigate('Register')}>
         {t('auth.createAccount')}
       </Button>
-
-      <Text>{Config.API_URL}</Text>
     </View>
   );
 }
