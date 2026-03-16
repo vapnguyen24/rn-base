@@ -5,7 +5,7 @@ import type { AuthStackParamList } from '@navigation/navigation.types';
 import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../hooks/useLoginMutation';
 import { Button } from 'heroui-native/button';
-import { FormField } from '@shared/components/form/FormField';
+import { FormField } from '@shared/components/form';
 import { useZodForm } from '@shared/hooks/useZodForm';
 import { loginSchema } from '../schemas/login.schema';
 import type { LoginSchema } from '../schemas/login.schema';

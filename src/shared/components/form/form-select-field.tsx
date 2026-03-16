@@ -33,6 +33,7 @@ export function FormSelectField<TFieldValues extends FieldValues>({
         <TextField isInvalid={!!error}>
           {label ? <Label>{label}</Label> : null}
           <Select
+            presentation={presentation}
             value={value ? { value, label: options.find(o => o.value === value)?.label ?? value } : undefined}
             onValueChange={option => {
               if (option && !Array.isArray(option)) {

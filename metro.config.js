@@ -17,6 +17,9 @@ const isStorybookEnabled = process.env.STORYBOOK_ENABLED === 'true';
 const config = mergeConfig(getDefaultConfig(__dirname), {
   // Force cache bust when babel.config.js changes (worklets plugin)
   cacheVersion: 'worklets-v2',
+  transformer: {
+    unstable_allowRequireContext: true,
+  },
   resolver: {
     extraNodeModules: {
       '@core': path.resolve(__dirname, 'src/core'),
