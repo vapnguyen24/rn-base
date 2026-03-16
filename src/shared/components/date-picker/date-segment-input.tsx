@@ -1,6 +1,6 @@
 import React, { JSX, ReactNode, useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-import { extractDigits, formatDateString } from '@shared/utils/date.utils';
+import { extractDigits, formatDateString, sanitizeDateDigits } from '@shared/utils/date.utils';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -35,13 +35,13 @@ export function DateSegmentInput({
     : 'border-field';
 
   const handleChange = (text: string) => {
-    const digits = extractDigits(text).slice(0, 8);
+    const digits = sanitizeDateDigits(extractDigits(text).slice(0, 8));
     onChange(formatDateString(digits));
   };
 
   return (
     <View
-      className={`flex-row items-center py-3.5 px-3 rounded-2xl border-2 bg-field ios:shadow-field android:shadow-sm ${borderClass} ${isDisabled ? 'opacity-disabled' : ''}`}
+      className={`flex-row items-center rounded-2xl border-2 bg-field ios:shadow-field android:shadow-sm ${borderClass} ${isDisabled ? 'opacity-disabled' : ''}`}
       style={styles.borderCurve}
     >
       <TextInput
@@ -49,14 +49,18 @@ export function DateSegmentInput({
         onChangeText={handleChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        placeholder="MM/DD/YYYY"
+        placeholder="MM / DD / YYYY"
         placeholderTextColorClassName="accent-field-placeholder"
         keyboardType="number-pad"
         maxLength={10}
         editable={!isDisabled && !isReadOnly}
-        className="text-foreground font-normal text-base flex-1"
+        className="text-foreground font-normal text-base flex-1 py-3.5 leading-0 pl-3"
       />
-      {typeof trailingIcon === 'function' ? trailingIcon() : trailingIcon ?? null}
+      {trailingIcon ? (
+        <View className="pr-3">
+          {typeof trailingIcon === 'function' ? trailingIcon() : trailingIcon}
+        </View>
+      ) : null}
     </View>
   );
 }

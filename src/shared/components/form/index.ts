@@ -7,3 +7,4 @@ export { FormSliderField } from './form-slider-field';
 export { FormOTPField } from './form-otp-field';
 export { FormDateField } from './form-date-field';
 export { FormDatePickerField } from './form-date-picker-field';
+export { FormDateRangePickerField } from './form-date-range-picker-field';

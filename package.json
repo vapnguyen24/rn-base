@@ -10,7 +10,7 @@
     "ios:staging": "echo .env.staging > /tmp/envfile && react-native run-ios",
     "ios:prod": "echo .env.production > /tmp/envfile && react-native run-ios",
     "lint": "eslint .",
-    "start": "react-native start",
+    "start": "STORYBOOK_ENABLED=false react-native start --reset-cache",
     "storybook": "STORYBOOK_ENABLED=true react-native start --reset-cache",
     "test": "jest",
     "test:ci": "jest --ci --coverage --forceExit --runInBand",

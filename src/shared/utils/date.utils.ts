@@ -53,6 +53,58 @@ export function stringToDate(str: string): Date | undefined {
   return isNaN(date.getTime()) ? undefined : date;
 }
 
+/**
+ * Sanitizes up to 8 raw digit characters into a valid date digit string
+ * (MM DD YYYY) by clamping each segment and auto-advancing when the first
+ * digit of a segment already implies a complete value.
+ *
+ * Rules applied in order:
+ * - Month first digit > 1 → prepend '0' (e.g. "3" → "03")
+ * - Month 00 → "01", month > 12 → "12"
+ * - Day first digit > 3 → prepend '0' (e.g. "4" → "04")
+ * - Day 00 → "01", day > 31 → "31"
+ * - When all 8 digits are present, day is clamped to the actual max day of
+ *   the given month/year (handles Feb 29/30, etc.)
+ *
+ * @param raw - Up to 8 digit characters (non-digits already stripped)
+ */
+export function sanitizeDateDigits(raw: string): string {
+  let d = raw.slice(0, 8);
+
+  // ── Month (positions 0-1) ──────────────────────────────────────────────────
+  if (d.length === 1 && d[0] > '1') {
+    d = '0' + d; // e.g. "3" → "03", "9" → "09"
+  }
+  if (d.length >= 2) {
+    const m = parseInt(d.slice(0, 2), 10);
+    if (m === 0) d = '01' + d.slice(2);
+    else if (m > 12) d = '12' + d.slice(2);
+  }
+
+  // ── Day (positions 2-3) ────────────────────────────────────────────────────
+  if (d.length === 3 && d[2] > '3') {
+    d = d.slice(0, 2) + '0' + d.slice(2); // e.g. "034" → "0304"
+  }
+  if (d.length >= 4) {
+    const day = parseInt(d.slice(2, 4), 10);
+    if (day === 0) d = d.slice(0, 2) + '01' + d.slice(4);
+    else if (day > 31) d = d.slice(0, 2) + '31' + d.slice(4);
+  }
+
+  // ── Full date: clamp day to actual max of month (year complete) ────────────
+  if (d.length === 8) {
+    const month = parseInt(d.slice(0, 2), 10);
+    const day = parseInt(d.slice(2, 4), 10);
+    const year = parseInt(d.slice(4, 8), 10);
+    const maxDay = new Date(year, month, 0).getDate(); // last day of month
+    if (day > maxDay) {
+      d = d.slice(0, 2) + String(maxDay).padStart(2, '0') + d.slice(4);
+    }
+  }
+
+  return d;
+}
+
 // ─── Calendar Helpers ─────────────────────────────────────────────────────────
 
 /**
@@ -98,6 +150,23 @@ export function buildCells(
   }
 
   return cells;
+}
+
+/**
+ * Returns `true` if `date` falls strictly between `start` and `end`
+ * (exclusive), comparing calendar days only.
+ */
+export function isDateBetween(date: Date, start: Date, end: Date): boolean {
+  const d = date.getFullYear() * 10000 + date.getMonth() * 100 + date.getDate();
+  const s = start.getFullYear() * 10000 + start.getMonth() * 100 + start.getDate();
+  const e = end.getFullYear() * 10000 + end.getMonth() * 100 + end.getDate();
+  return d > s && d < e;
+}
+
+/** A start/end date pair used by range pickers. Both ends are optional. */
+export interface DateRange {
+  start?: Date;
+  end?: Date;
 }
 
 // ─── Date Formatting ──────────────────────────────────────────────────────────
