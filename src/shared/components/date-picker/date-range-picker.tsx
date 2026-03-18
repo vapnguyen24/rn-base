@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { CalendarDays } from 'lucide-react-native';
 import {
@@ -87,6 +87,8 @@ export function DateRangePicker({
   errorMessage,
   presentation = 'bottom-sheet',
 }: DateRangePickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const [_accent, dangerColor, mutedColor] = useThemeColor([
     'accent',
     'danger',
@@ -94,6 +96,11 @@ export function DateRangePicker({
   ]) as string[];
 
   const iconColor = isInvalid ? dangerColor : mutedColor;
+
+  const handleRangeChange = (range: DateRange) => {
+    onChange(range);
+    if (range.start && range.end) setIsOpen(false);
+  };
 
   const field = (trigger: React.ReactNode) => (
     <TextField isInvalid={isInvalid} isDisabled={isDisabled}>
@@ -109,11 +116,11 @@ export function DateRangePicker({
     </TextField>
   );
 
-  const calendar = <RangeCalendar value={value} onChange={onChange} />;
+  const calendar = <RangeCalendar value={value} onChange={handleRangeChange} />;
 
   if (presentation === 'dialog') {
     return (
-      <Dialog>
+      <Dialog isOpen={isOpen} onOpenChange={setIsOpen}>
         {field(
           <Dialog.Trigger asChild>
             <CalendarDays size={20} color={iconColor} />
@@ -128,7 +135,7 @@ export function DateRangePicker({
   }
 
   return (
-    <BottomSheet>
+    <BottomSheet isOpen={isOpen} onOpenChange={setIsOpen}>
       {field(
         <BottomSheet.Trigger asChild>
           <CalendarDays size={20} color={iconColor} />

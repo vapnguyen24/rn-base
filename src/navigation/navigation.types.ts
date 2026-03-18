@@ -1,6 +1,6 @@
 export type RootStackParamList = {
   Auth: undefined;
-  Home: undefined;
+  Main: undefined;
 };
 
 export type AuthStackParamList = {
@@ -8,7 +8,9 @@ export type AuthStackParamList = {
   Register: undefined;
 };
 
-export type HomeStackParamList = {
-  Feed: undefined;
-  Profile: { userId: string };
+export type MainTabParamList = {
+  Home: undefined;
+  Explore: undefined;
+  Notifications: undefined;
+  Profile: undefined;
 };

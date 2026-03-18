@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CalendarDays } from 'lucide-react-native';
 import {
   BottomSheet,
@@ -39,6 +39,8 @@ export function DatePicker({
   errorMessage,
   presentation = 'bottom-sheet',
 }: DatePickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const [_accentColor, dangerColor, mutedColor] = useThemeColor([
     'accent',
     'danger',
@@ -49,6 +51,11 @@ export function DatePicker({
 
   const handleStringChange = (str: string) => {
     onChange(stringToDate(str));
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    onChange(date);
+    if (date) setIsOpen(false);
   };
 
   const input = (trigger: React.ReactNode) => (
@@ -67,11 +74,11 @@ export function DatePicker({
     </TextField>
   );
 
-  const calendar = <Calendar value={value} onChange={onChange} />;
+  const calendar = <Calendar value={value} onChange={handleDateChange} />;
 
   if (presentation === 'dialog') {
     return (
-      <Dialog>
+      <Dialog isOpen={isOpen} onOpenChange={setIsOpen}>
         {input(
           <Dialog.Trigger asChild>
             <CalendarDays size={20} color={iconColor} />
@@ -86,7 +93,7 @@ export function DatePicker({
   }
 
   return (
-    <BottomSheet>
+    <BottomSheet isOpen={isOpen} onOpenChange={setIsOpen}>
       {input(
         <BottomSheet.Trigger asChild>
           <CalendarDays size={20} color={iconColor} />

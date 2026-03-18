@@ -25,7 +25,11 @@ export function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <View testID="login-screen" className="bg-background gap-4" style={styles.container}>
+    <View
+      testID="login-screen"
+      className="bg-background gap-4"
+      style={styles.container}
+    >
       <Text style={styles.title}>{t('auth.welcomeBack')}</Text>
 
       <FormField
