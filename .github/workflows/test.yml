@@ -88,6 +88,9 @@ jobs:
           key: pods-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: pods-
 
+      - name: Install applesimutils
+        run: brew tap wix/brew && brew install applesimutils
+
       - name: Install Pods
         run: cd ios && pod install --repo-update
 
