@@ -20,7 +20,8 @@ export function ForceUpdateModal({ isOpen, storeUrl }: Props) {
 
   return (
     <Dialog isOpen={isOpen} onOpenChange={() => { /* intentionally non-dismissable */ }}>
-      <Dialog.Portal>
+      {/* disableFullWindowOverlay: prevents FullWindowOverlay on iOS from blocking Fast Refresh in dev */}
+      <Dialog.Portal disableFullWindowOverlay={__DEV__}>
         {/* isCloseOnPress=false: user cannot dismiss by tapping the overlay */}
         <Dialog.Overlay isCloseOnPress={false} />
         <Dialog.Content isSwipeable={false}>
