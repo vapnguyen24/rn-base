@@ -105,6 +105,9 @@ const PopoverContent = stub('PopoverContent');
 const PopoverTrigger = stub('PopoverTrigger');
 const Progress = () => React.createElement(RN.View, null);
 const Slider = () => React.createElement(RN.View, null);
+const TextField = stub('TextField');
+const Label = ({ children, ...rest }) => React.createElement(RN.Text, rest, children);
+const FieldError = ({ children, ...rest }) => React.createElement(RN.Text, rest, children);
 
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 const useDisclosure = jest.fn(() => ({
@@ -152,4 +155,7 @@ module.exports = {
   Slider,
   useDisclosure,
   useTheme,
+  TextField,
+  Label,
+  FieldError,
 };
