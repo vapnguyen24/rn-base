@@ -49,6 +49,11 @@ const vi: Translations = {
     offline: 'Bạn đang offline',
     backOnline: 'Đã khôi phục kết nối internet',
   },
+  forceUpdate: {
+    title: 'Cần cập nhật ứng dụng',
+    description: 'Phiên bản mới đã có sẵn. Vui lòng cập nhật để tiếp tục sử dụng ứng dụng.',
+    updateNow: 'Cập nhật ngay',
+  },
   auth: {
     welcomeBack: 'Chào mừng trở lại',
     email: 'Email',

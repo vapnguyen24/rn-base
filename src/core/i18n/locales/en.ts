@@ -47,6 +47,11 @@ const en = {
     offline: 'You are offline',
     backOnline: 'Internet connection restored',
   },
+  forceUpdate: {
+    title: 'Update Required',
+    description: 'A new version of the app is available. Please update to continue using the app.',
+    updateNow: 'Update Now',
+  },
   auth: {
     welcomeBack: 'Welcome back',
     email: 'Email',
