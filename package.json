@@ -18,7 +18,8 @@
     "test:coverage": "jest --coverage",
     "test:e2e:ios:build": "detox build --configuration ios.sim.release",
     "test:e2e:ios": "detox test --configuration ios.sim.release --cleanup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",
@@ -59,6 +60,8 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@react-native-async-storage/async-storage": "^3.0.1",
     "@react-native-community/cli": "20.1.0",
     "@react-native-community/cli-platform-android": "20.1.0",
@@ -80,6 +83,7 @@
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "detox": "^20.47.0",
     "eslint": "^8.19.0",
+    "husky": "^9.1.7",
     "jest": "^29.6.3",
     "msw": "^2.12.10",
     "node-fetch": "^3.3.2",
