@@ -1,0 +1,182 @@
+# ─── Deploy CI/CD ───────────────────────────────────────────────────────────
+# Two trigger modes:
+#   1. Push a version tag (v*) → auto deploy beta to TestFlight + Internal Testing
+#   2. Manual dispatch        → choose platform + lane (beta or release)
+#
+# Requirements (GitHub Secrets):
+#   iOS:     MATCH_GIT_URL, MATCH_PASSWORD, MATCH_GIT_BASIC_AUTHORIZATION,
+#            IOS_APP_IDENTIFIER, APPLE_ID, ITC_TEAM_ID, TEAM_ID,
+#            APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_API_ISSUER_ID,
+#            APP_STORE_CONNECT_API_KEY_CONTENT
+#   Android: ANDROID_PACKAGE_NAME, KEYSTORE_FILE_BASE64, KEYSTORE_PASSWORD,
+#            KEY_ALIAS, KEY_PASSWORD, GOOGLE_PLAY_JSON_KEY
+
+name: Deploy
+
+on:
+  # Auto beta when a version tag is pushed (e.g. v1.2.3)
+  push:
+    tags:
+      - 'v*'
+
+  # Manual trigger — choose platform and lane
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform
+        required: true
+        default: both
+        type: choice
+        options: [both, ios, android]
+      lane:
+        description: Lane
+        required: true
+        default: beta
+        type: choice
+        options: [beta, release]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false   # Never cancel an in-flight deploy
+
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── Resolve inputs ────────────────────────────────────────────────────────
+  # Normalises tag pushes and manual dispatches into a single set of outputs
+  # so downstream jobs don't need to repeat the same logic.
+  setup:
+    name: Resolve inputs
+    runs-on: ubuntu-latest
+    outputs:
+      lane: ${{ steps.resolve.outputs.lane }}
+      run_ios: ${{ steps.resolve.outputs.run_ios }}
+      run_android: ${{ steps.resolve.outputs.run_android }}
+    steps:
+      - name: Resolve lane and platforms
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "lane=beta" >> $GITHUB_OUTPUT
+            echo "run_ios=true" >> $GITHUB_OUTPUT
+            echo "run_android=true" >> $GITHUB_OUTPUT
+          else
+            PLATFORM="${{ github.event.inputs.platform }}"
+            echo "lane=${{ github.event.inputs.lane }}" >> $GITHUB_OUTPUT
+            echo "run_ios=$([[ $PLATFORM == 'ios' || $PLATFORM == 'both' ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+            echo "run_android=$([[ $PLATFORM == 'android' || $PLATFORM == 'both' ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          fi
+
+  # ── iOS Deploy ────────────────────────────────────────────────────────────
+  ios:
+    name: iOS — ${{ needs.setup.outputs.lane }}
+    runs-on: macos-14
+    timeout-minutes: 60
+    needs: setup
+    if: needs.setup.outputs.run_ios == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: pods-
+
+      - name: Install Pods
+        run: cd ios && pod install
+
+      - name: Run fastlane ${{ needs.setup.outputs.lane }}
+        run: cd ios && bundle exec fastlane ${{ needs.setup.outputs.lane }}
+        env:
+          GIT_TAG: ${{ github.ref_name }}
+          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+
+  # ── Android Deploy ────────────────────────────────────────────────────────
+  android:
+    name: Android — ${{ needs.setup.outputs.lane }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: setup
+    if: needs.setup.outputs.run_android == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      # Decode base64 keystore stored as a secret
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE_BASE64 }}" | base64 --decode > android/app/heroui.jks
+
+      # Decode Google Play service account JSON stored as a secret
+      - name: Decode Google Play key
+        run: |
+          echo '${{ secrets.GOOGLE_PLAY_JSON_KEY }}' > android/fastlane/google-play-key.json
+
+      - name: Run fastlane ${{ needs.setup.outputs.lane }}
+        run: cd android && bundle exec fastlane ${{ needs.setup.outputs.lane }}
+        env:
+          GIT_TAG: ${{ github.ref_name }}
+          VERSION_CODE: ${{ github.run_number }}
+          ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+          KEYSTORE_PATH: ${{ github.workspace }}/android/app/heroui.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          GOOGLE_PLAY_JSON_KEY_PATH: fastlane/google-play-key.json

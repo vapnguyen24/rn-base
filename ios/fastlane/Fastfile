@@ -1,0 +1,77 @@
+default_platform(:ios)
+
+platform :ios do
+
+  # ─── Private: parse version from git tag or env ─────────────────────────────
+  # Tag "v1.0.1" → "1.0.1"
+
+  private_lane :resolve_version do
+    tag = ENV["GIT_TAG"] || last_git_tag
+    tag.gsub(/^v/, "")
+  end
+
+  # ─── Private: sync certificates via match ───────────────────────────────────
+
+  private_lane :sync_certs do |options|
+    type = options[:type] || "appstore"
+    match(
+      type: type,
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      git_url: ENV["MATCH_GIT_URL"],
+      readonly: is_ci
+    )
+  end
+
+  # ─── Private: build the app ─────────────────────────────────────────────────
+
+  private_lane :build do |options|
+    env_file = options[:env_file]
+    version   = resolve_version
+
+    sync_certs(type: "appstore")
+
+    increment_version_number(
+      version_number: version,
+      xcodeproj: "heroui.xcodeproj"
+    )
+    increment_build_number(xcodeproj: "heroui.xcodeproj")
+
+    build_app(
+      workspace: "heroui.xcworkspace",
+      scheme: "heroui",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "heroui.ipa",
+      xcargs: "ENVFILE=#{env_file}"   # passed to react-native-config
+    )
+  end
+
+  # ─── Case 1: Build & upload to TestFlight (staging env) ─────────────────────
+  # Usage: bundle exec fastlane beta
+
+  lane :beta do
+    build(env_file: ".env.staging")
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      changelog: ENV["GIT_TAG"] || "Beta release"
+    )
+    UI.success("Successfully uploaded to TestFlight! (staging env)")
+  end
+
+  # ─── Case 2: Deploy to App Store production (production env) ────────────────
+  # Usage: bundle exec fastlane release
+
+  lane :release do
+    build(env_file: ".env.production")
+    upload_to_app_store(
+      skip_screenshots: true,
+      skip_metadata: true,
+      submit_for_review: true,
+      automatic_release: false,
+      force: true
+    )
+    UI.success("Successfully submitted to App Store! (production env)")
+  end
+
+end

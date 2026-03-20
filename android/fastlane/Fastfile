@@ -1,0 +1,70 @@
+default_platform(:android)
+
+platform :android do
+
+  # ─── Private: parse version from git tag or env ─────────────────────────────
+  # Tag "v1.0.1" → "1.0.1"
+
+  private_lane :resolve_version do
+    tag = ENV["GIT_TAG"] || last_git_tag
+    tag.gsub(/^v/, "")
+  end
+
+  # ─── Private: build signed AAB ──────────────────────────────────────────────
+
+  private_lane :build do |options|
+    env_file     = options[:env_file]
+    version_name = resolve_version
+    version_code = ENV["VERSION_CODE"] || "1"
+
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      project_dir: ".",
+      properties: {
+        "android.injected.signing.store.file"     => ENV["KEYSTORE_PATH"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias"      => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password"   => ENV["KEY_PASSWORD"],
+        "VERSION_NAME"                            => version_name,
+        "VERSION_CODE"                            => version_code
+      },
+      flags: "-PenvConfigFile=#{env_file}"
+    )
+  end
+
+  # ─── Case 1: Build & upload to Internal Testing (staging env) ───────────────
+  # Usage: bundle exec fastlane beta
+
+  lane :beta do
+    build(env_file: ".env.staging")
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    UI.success("Successfully uploaded to Internal Testing! (staging env)")
+  end
+
+  # ─── Case 2: Build production & upload to Production track ──────────────────
+  # Usage: bundle exec fastlane release
+
+  lane :release do
+    build(env_file: ".env.production")
+    upload_to_play_store(
+      track: "production",
+      rollout: "1.0",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+    UI.success("Successfully uploaded to Production! (production env)")
+  end
+
+end
