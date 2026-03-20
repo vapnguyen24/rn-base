@@ -1,28 +1,35 @@
-# ─── Test CI ────────────────────────────────────────────────────────────────
-# Runs on every push and PR:
-#   Job 1 — unit + component tests (Jest + RTL + MSW)     ← fast, Linux
-#   Job 2 — iOS E2E tests (Detox)                          ← slow, macOS
-#   Job 3 — Android E2E tests (Detox)                      ← slow, Linux + emulator
+# ─── Test CI (Optimized) ─────────────────────────────────────────────────────
+# Job 1 — Unit + Component tests (Jest + RTL + MSW)     ← fast, Linux
+# Job 2 — iOS E2E tests (Detox)                          ← chỉ chạy khi PR → main
+# Job 3 — Android E2E tests (Detox)                      ← chỉ chạy khi PR → main
 #
-# Caching strategy:
-#   - node_modules is cached by package-lock.json hash
-#   - Gradle cache is preserved between Android runs
-#   - CocoaPods is cached between iOS runs
-#
-# Requirements:
-#   - Repository secret CODECOV_TOKEN (optional, for coverage upload)
-
 name: Test
 
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
+      - 'ios/**'
+      - 'android/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
+      - 'ios/**'
+      - 'android/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true   # Cancel superseded runs on the same branch
+  cancel-in-progress: true
 
 # ─────────────────────────────────────────────────────────────────────────────
 jobs:
@@ -40,7 +47,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc          # Pin Node version via .nvmrc
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
@@ -63,9 +70,10 @@ jobs:
   # ── Job 2: iOS E2E ────────────────────────────────────────────────────────────
   e2e-ios:
     name: iOS E2E Tests
-    runs-on: macos-15            # Xcode 16.x required by React Native >= 0.76
+    runs-on: macos-15
     timeout-minutes: 60
-    needs: unit                  # Only run E2E if unit tests pass
+    needs: unit
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
 
     steps:
       - name: Checkout
@@ -80,7 +88,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Cache CocoaPods
       - name: Cache CocoaPods
         uses: actions/cache@v4
         with:
@@ -91,17 +98,19 @@ jobs:
       - name: Install applesimutils
         run: brew tap wix/brew && brew install applesimutils
 
+      # Bỏ --repo-update: tiết kiệm 2-3 phút
       - name: Install Pods
-        run: cd ios && pod install --repo-update
+        run: cd ios && pod install
 
+      # Cache key gọn hơn → cache hit tốt hơn
       - name: Cache Detox build
         uses: actions/cache@v4
         with:
           path: ios/build
-          key: detox-ios-build-${{ hashFiles('ios/**') }}-${{ hashFiles('src/**') }}
+          key: detox-ios-build-${{ hashFiles('ios/Podfile.lock', 'package-lock.json') }}
           restore-keys: detox-ios-build-
 
-      - name: Build for Detox (Release — faster tests)
+      - name: Build for Detox (Release)
         run: npx detox build --configuration ios.sim.release
 
       - name: Run Detox E2E
@@ -123,6 +132,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     needs: unit
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
 
     steps:
       - name: Checkout
@@ -152,15 +162,16 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-
 
-      - name: Build for Detox (Release)
-        run: npx detox build --configuration android.emu.release
-
-      - name: Enable KVM (hardware acceleration for AVD)
+      # Enable KVM trước khi build → AVD boot nhanh hơn
+      - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
             | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+
+      - name: Build for Detox (Release)
+        run: npx detox build --configuration android.emu.release
 
       - name: Run Android E2E with AVD
         uses: reactivecircus/android-emulator-runner@v2
