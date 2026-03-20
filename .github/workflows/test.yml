@@ -180,6 +180,7 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          avd-name: Medium_Phone
           script: npx detox test --configuration android.emu.release --cleanup
         env:
           CI: true
