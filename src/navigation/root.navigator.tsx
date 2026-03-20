@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { RootStackParamList } from './navigation.types';
 import { AuthNavigator } from './auth.navigator';
 import { MainNavigator } from './main.navigator';
-import { useAuthStore } from '@features/auth/presentation/store/auth.store';
+import { useIsAuthenticated } from '@features/auth/presentation/store/auth.store';
 import { ForceUpdateModal } from '@shared/components/force-update-modal';
 import { useForceUpdate } from '@shared/hooks/useForceUpdate';
 import { navigationRef } from './navigation.service';
@@ -19,7 +19,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const MINIMUM_VERSION: string | undefined = undefined;
 
 export function RootNavigator() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isAuthenticated = useIsAuthenticated();
   const isUpdateRequired = useForceUpdate(MINIMUM_VERSION);
 
   return (

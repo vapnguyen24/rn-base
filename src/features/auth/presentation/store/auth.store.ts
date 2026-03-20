@@ -37,3 +37,14 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
+
+// --- Selectors ---
+export const useIsAuthenticated = () => useAuthStore((s) => s.isAuthenticated);
+export const useAuthUser = () => useAuthStore((s) => s.user);
+export const useAuthTokens = () => useAuthStore((s) => s.tokens);
+export const useAuthActions = () =>
+  useAuthStore((s) => ({
+    setUser: s.setUser,
+    setTokens: s.setTokens,
+    clearAuth: s.clearAuth,
+  }));
