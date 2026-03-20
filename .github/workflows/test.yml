@@ -63,7 +63,7 @@ jobs:
   # ── Job 2: iOS E2E ────────────────────────────────────────────────────────────
   e2e-ios:
     name: iOS E2E Tests
-    runs-on: macos-14            # Apple Silicon runner — faster builds
+    runs-on: macos-15            # Xcode 16.x required by React Native >= 0.76
     timeout-minutes: 60
     needs: unit                  # Only run E2E if unit tests pass
 
