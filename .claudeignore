@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Native build outputs
+android/build/
+android/.gradle/
+android/app/build/
+ios/build/
+ios/Pods/
+ios/DerivedData/
+
+# Lock files
+package-lock.json
+Gemfile.lock
+
+# Coverage & test artifacts
+coverage/
+
+# Environment files
+.env
+.env.staging
+.env.production
+
+# Generated / cache
+.metro-cache/
+.babel-cache/
+*.jsbundle
+*.map
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

@@ -1,97 +1,194 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# HeroUI — React Native Starter
 
-# Getting Started
+A production-ready React Native boilerplate built with **Clean Architecture**, **HeroUI Native**, and a modern toolchain. Supports iOS and Android.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## Tech Stack
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+| Layer | Library |
+|---|---|
+| UI Components | [HeroUI Native](https://heroui-native.com) |
+| Styling | Tailwind CSS via [Uniwind](https://github.com/WraithWinterly/uniwind) |
+| Navigation | React Navigation (Native Stack + Bottom Tabs) |
+| Server State | TanStack Query |
+| Client State | Zustand |
+| Forms | React Hook Form + Zod |
+| HTTP Client | Axios |
+| Storage | react-native-mmkv (encrypted) |
+| Animations | React Native Reanimated |
+| i18n | i18next (English, Vietnamese) |
+| Testing | Jest, React Testing Library, Detox (E2E) |
+| API Mocking | MSW v2 |
+| Component Dev | Storybook |
+| CI/CD | GitHub Actions + Fastlane |
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
+
+## Project Structure
+
+```
+heroui/
+├── src/
+│   ├── core/               # App-wide infrastructure
+│   │   ├── api/            # Axios instance, type definitions, MSW mock handlers
+│   │   ├── config/         # Environment config & constants
+│   │   ├── di/             # Dependency injection factories
+│   │   ├── i18n/           # i18next setup & locale files (en, vi)
+│   │   ├── native/         # Native module wrappers
+│   │   ├── query/          # TanStack Query client
+│   │   └── storage/        # Storage abstraction (MMKV implementation)
+│   │
+│   ├── features/           # Feature modules (Clean Architecture)
+│   │   ├── auth/           # Authentication
+│   │   │   ├── data/       # API datasources, DTOs, mappers, repository impl
+│   │   │   ├── domain/     # Entities, repository interfaces, use cases, errors
+│   │   │   └── presentation/ # Screens, hooks, form schemas, Zustand store
+│   │   ├── home/           # Home feature
+│   │   └── main/           # Main tab area (Home, Explore, Notifications, Profile)
+│   │
+│   ├── navigation/         # Navigation setup
+│   │   ├── root.navigator.tsx    # Auth/Main flow switcher
+│   │   ├── auth.navigator.tsx    # Auth stack
+│   │   ├── main.navigator.tsx    # Bottom tab navigator
+│   │   ├── navigation.service.ts # Ref-based imperative navigation
+│   │   └── navigation.types.ts   # Route param types
+│   │
+│   └── shared/             # Cross-feature shared code
+│       ├── components/     # Reusable UI components (form fields, buttons, date picker, etc.)
+│       ├── hooks/           # Custom hooks (useDebounce, useForceUpdate, useZodForm)
+│       ├── types/           # Common TypeScript types
+│       └── utils/           # Date utilities, test utilities
+│
+├── e2e/                    # Detox end-to-end tests
+├── docs/                   # CI/CD and Fastlane documentation
+├── .github/workflows/      # GitHub Actions (test, deploy, commitlint)
+├── android/                # Android native code
+├── ios/                    # iOS native code
+├── App.tsx                 # Root component
+└── index.js                # Entry point
+└── global.css              # Theme configuration
+```
+
+### Architecture Pattern
+
+Each feature follows **Clean Architecture** with three layers:
+
+- **`data/`** — API calls, DTOs, mappers, repository implementations
+- **`domain/`** — Entities, repository interfaces, use cases, error types (no framework dependencies)
+- **`presentation/`** — Screens, hooks, form schemas, local state (Zustand stores)
+
+### Path Aliases
+
+| Alias | Resolves to |
+|---|---|
+| `@core/*` | `src/core/*` |
+| `@features/*` | `src/features/*` |
+| `@shared/*` | `src/shared/*` |
+| `@navigation/*` | `src/navigation/*` |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 22.11.0
+- Ruby (for CocoaPods/Fastlane)
+- Xcode (iOS) / Android Studio (Android)
+
+Complete the [React Native environment setup](https://reactnative.dev/docs/set-up-your-environment) before proceeding.
+
+### Install Dependencies
 
 ```sh
-# Using npm
+npm install
+bundle install          # Install CocoaPods & Fastlane
+bundle exec pod install # iOS native deps
+```
+
+### Environment Setup
+
+Copy and configure your environment file:
+
+```sh
+cp env.example .env
+```
+
+Available variables: `API_URL`, `GOOGLE_MAPS_API_KEY`.
+Environment-specific files: `.env`, `.env.staging`, `.env.production`.
+
+### Run the App
+
+```sh
+# Start Metro dev server
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+# Run on Android
 npm run android
 
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# Run on iOS
 npm run ios
 
-# OR using Yarn
-yarn ios
+# Run with a specific environment
+npm run android:staging
+npm run android:prod
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Development
 
-## Step 3: Modify your app
+### Storybook
 
-Now that you have successfully run the app, let's make changes!
+```sh
+npm run storybook
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+### Linting & Type Checking
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+```sh
+npm run lint
+npm run typecheck
+```
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Testing
 
-## Congratulations! :tada:
+```sh
+npm test                  # Run all unit/integration tests
+npm run test:watch        # Watch mode
+npm run test:ci           # CI mode with coverage report
+```
 
-You've successfully run and modified your React Native App. :partying_face:
+Coverage threshold: **70%** (branches, functions, lines, statements).
 
-### Now what?
+### End-to-End Tests (Detox)
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+```sh
+npm run test:e2e:ios:build   # Build for E2E
+npm run test:e2e:ios         # Run E2E tests
+```
 
-# Troubleshooting
+---
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## CI/CD
 
-# Learn More
+| Workflow | Trigger |
+|---|---|
+| Commitlint | Every push/PR — enforces Conventional Commits |
+| Test | Every push/PR — Jest unit tests |
+| Deploy | Configured via Fastlane for iOS/Android distribution |
 
-To learn more about React Native, take a look at the following resources:
+See [docs/ci-cd.md](docs/ci-cd.md) and [docs/fastlane.md](docs/fastlane.md) for details.
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+---
+
+## Commit Convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by Commitlint + Husky.
+
+```
+feat: add login screen
+fix: resolve token refresh race condition
+chore: update dependencies
+```
